@@ -1,0 +1,2 @@
+*+ WARNING: -stim_label 1 'IRR' replacing old label 'Rel'
+*+ WARNING: no -stim_label given for stim #2 ==> label = 'Stim#2'
