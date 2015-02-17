@@ -11,17 +11,17 @@ clear all;
 % DaqDOut(HID,0,0);  %Turn off
 
 %% Setup parameters
-block_num=2;
+block_num = 2;
 
 %setup number of trials within blocks and practice
-trial_num_pbl=12;
+trial_num_pbl = 12;
 %prac_trial_num=1;
 
 %setup trial timing
-stim_on_time=2.5; %time of stimulus on screen
-delay_time=.25; %time of delay between stimulus and feedback
-feedback_time=2.25; %time of feedback
-ITIs=[1.5,1.75,2,2.25,2.5,2.75,3]; %randomized intervals between stimuli
+stim_on_time = 1; %time of stimulus on screen
+delay_time = .5; %time of delay between stimulus 
+%feedback_time = 2.25; %time of feedback, not using for now
+%ITIs=[1.5,1.75,2,2.25,2.5,2.75,3]; %randomized intervals between stimuli, not using for now
 
 %setup paths to load stimuli and write outputs
 
@@ -85,6 +85,16 @@ cd(fullfile(WD,house_dir));
 cd(WD);
 
 
+%% organize block order
+Conditions = {'Fo', 'Ho', 'FH', 'HF'};
+1:Fo = face as target on top of scramble houses
+2:Ho = House as target on top of scramble faces
+3:FH = Face as target on top of house distractors
+4:HF = House as target on top of face distractors
+
+% randomize the order of blocks (might want to pseudorandomize this later)
+block_conditions = randperm(4);
+
 % a key stroke will end the instruction page
 keepchecking = 1;
 while (keepchecking == 1)
@@ -123,6 +133,18 @@ tr_num_cnt=0;
 
 for j = 1:block_num
     
+    % extract stimuli set depending on the condition. Right now only presenting
+    % single pic with no scramble underlay or distractors... will have to fix this
+    % when those are done
+    if (block_conditions(j) == 1 | block_conditions(j) == 3)
+        target_images = face_images;
+        target_names = face_names;
+    elseif (block_conditions(j) == 2 | block_conditions(j) == 4)
+        target_images = house_images;
+        target_namess = house_names;
+    end
+        
+
     %create sequence of 1-back match
     selected_pics = randperm(30,12);
     nback_matches = sort(randperm(11,3)+1);
@@ -139,116 +161,64 @@ for j = 1:block_num
     % this is the sequence of pictures that will be presented 
     selected_pics(nback_matches) = selected_pics(nback_matches-1)
 
-    
-    cat1_cnt=0;
-    cat2_cnt=0;
-    
-    %randomize the sequence of picture names for cat1 and cat2
-    cat1_rnd=randperm(length(cat1_names));
-    cat2_rnd=randperm(length(cat2_names));
-    
-    %randomize the sequence of picture names for cat1 and cat2 to ensure sufficent tirla number...?
-    while length(cat1_rnd)<(trial_num_pbl/2)
-        cat1_rnd=[cat1_rnd randperm(length(cat1_names))];
-    end
-    
-    while length(cat2_rnd)<(trial_num_pbl/2)
-        cat2_rnd=[cat2_rnd randperm(length(cat2_names))];
-    end
-    
-    for i = 1:length(trial_rand)
+    pic_num = 0;
+    for i = 1:length(selected_pics)
         
-        %pick picture for cat1
-        if trial_rand(i)==1
-            cat1_cnt=cat1_cnt+1;
-            curr_pic=squeeze(cat1_images(cat1_rnd(cat1_cnt),:,:,:));
-            curr_pic_name=cat1_names{cat1_rnd(cat1_cnt)};
-            curr_picnum=cat1_rnd(cat1_cnt);
-        end
-        
-        %pick picture for cat1
-        if trial_rand(i)==2
-            cat2_cnt=cat2_cnt+1;
-            curr_pic=squeeze(cat2_images(cat2_rnd(cat2_cnt),:,:,:));
-            curr_pic_name=cat2_names{cat2_rnd(cat2_cnt)};
-            curr_picnum=cat2_rnd(cat2_cnt);
-        end
-        
-        Screen(window,'FillRect',black);
+        %extract to be presented stimuli
+        pic_num=pic_num+1;
+        curr_pic=squeeze(target_images(selected_pics(pic_num),:,:,:));
+        curr_pic_name=target_names{selected_pics(pic_num)};
+        curr_picnum=selected_pics(pic_num);
+
+        %present the stimuli
+        Screen(window,'FillRect',grey);
         Screen(window,'PutImage',curr_pic,imageRect);
         Screen(window, 'Flip');
-        DaqDOut(HID,0,1);  %Turn on
+        %DaqDOut(HID,0,1);  %This is the daq box setting, keep for now but prob irrelevant for our study
         
         % logging RTs and key strokes
         keepchecking = 1;
         RT=-1;
         resp=-1;
         
+        % trial time book keeping plus logging responses
         trial_start_time=GetSecs;
-%         while (keepchecking == 1)
-%             [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the Z or / key is being pressed.
-%             if find(keyCode==1)==29  % If key is being pressed...
-%                 keepchecking = 0; % ... end while-loop.
-%                 RT=GetSecs-trial_start_time;
-%             end
-%             if find(keyCode==1)==56  % If key is being pressed...
-%                 keepchecking = 0; % ... end while-loop.
-%                 RT=GetSecs-trial_start_time;
-%             end
-%             if ((GetSecs - trial_start_time) > stim_on_time)
-%                 keepchecking=0;
-%             end
-%         end
-        
-        
-        ButtonResponse=-1;
-        while (keepchecking == 1)
-           if Gamepad('GetButton',1,5)==1  % If key is being pressed...
-                    ButtonResponse=5;
-                    keepchecking = 0; % ... end while-loop.
-                    RT=GetSecs-trial_start_time;
-           end
-           if Gamepad('GetButton',1,8)==1  % If key is being pressed...
-                    ButtonResponse=8
-                    keepchecking = 0; % ... end while-loop.
-                    RT=GetSecs-trial_start_time;
-           end
-           if ((GetSecs - trial_start_time) > stim_on_time)
-                keepchecking=0; %when reach the maximum stimulus presentation time, exit loop
+        while (GetSecs - trial_start_time < stim_on_time)
+            [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the Z or / key is being pressed.
+            if find(keyCode==1)==29  % If key is being pressed...
+                RT=GetSecs-trial_start_time;
+            end
+
+            if find(keyCode==1)==56  % If key is being pressed...
+                RT=GetSecs-trial_start_time;
             end
         end
         
-        %determine key response mapping
-        if ButtonResponse ==5
+        if find(keyCode==1)==56
             resp=1;
-        elseif ButtonResponse ==8
+        elseif find(keyCode==1)==29
             resp=0;
-        else
-            resp = -1; %in the case of no keystroke or wrong key?
         end
-        
-%         if find(keyCode==1)==56
-%             resp=1;
-%         else
-%             if find(keyCode==1)==29
-%                 resp=0;
-%             end
-%         end
+
         while ((GetSecs - trial_start_time) < stim_on_time) % ensure sufficeint stimulus presentation time
         end
-        DaqDOut(HID,0,0);  %Turn off
-        %put up delay screen
-        Screen(window,'FillRect',black);
-        centertext(window,' ',20,centery-10,centerx,centery,black);
+
+
+        %DaqDOut(HID,0,0);  %Turn off
+
+        %put up delay screen for ITI (fixation cross)
+        Screen(window,'FillRect',grey);
+        Screen('TextSize', window, 80);
+        DrawFormattedText(window, '+', 'center',...
+            screenYpixels * 0.5, [0 0 1]);
         Screen(window, 'Flip');
-        starttime2=GetSecs;
-        
+        starttime2=GetSecs; 
         while (GetSecs - starttime2 < delay_time)
         end
         
         
         %determine correct or incorrect
-        Screen(window,'FillRect',black);
+        Screen(window,'FillRect',grey);
         if resp == -1
             tr_corr = -1;
         elseif (resp+1)==trial_rand(i)
@@ -257,32 +227,7 @@ for j = 1:block_num
             tr_corr = 0;
         end
         
-        % the following version will not give feedback on performance, but
-        % the explicit membership
-        %         if trial_rand(i)==1
-        %             centertext(window,'SUNNY',60,centery-30,centerx,centery,orange);
-        %             Screen(window, 'Flip');
-        %         else
-        %             centertext(window,'RAINY',60,centery-30,centerx,centery,grey);
-        %             Screen(window, 'Flip');
-        %         end
         
-        if tr_corr == 1; %correct response
-            centertext(window,'Correct!',60,centery-30,centerx,centery,orange);
-            Screen(window, 'Flip');
-        elseif tr_corr==0 && resp~=-1; %incorrect response
-            centertext(window,'Incorrect!',60,centery-30,centerx,centery,grey);
-            Screen(window, 'Flip');
-        elseif tr_corr == -1; %no correct key stroke detected
-            centertext(window,'Please respond faster!',60,centery-30,centerx,centery,white);
-            Screen(window, 'Flip');
-        end
-        %DaqDOut(HID,0,1);  %Turn on
-        starttime2=GetSecs;
-        
-        while (GetSecs - starttime2 < feedback_time)
-        end
-        %DaqDOut(HID,0,0);  %Turn off
         tr_num_cnt=tr_num_cnt+1;
         
         %%%%%% getting stuck here!!! using 0 as index!!!!!
@@ -305,16 +250,7 @@ for j = 1:block_num
         eval(sprintf('save ''Categorization_Data%s.mat'' data_mat;',subjname));
         
         eval(sprintf('cd %s',curr_dir));
-        %while ((GetSecs - trial_start_time) < response_window)
-        %end
-        %display a randomized ITI
-        Screen(window,'FillRect',black);
-        centertext(window,'+',20,centery-10,centerx,centery,white);
-        Screen(window, 'Flip');
-        starttime2=GetSecs;
-        
-        while (GetSecs - starttime2 < ITIs(randi(7)))
-        end
+ 
     end
     
     if j < block_num
