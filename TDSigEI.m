@@ -2,7 +2,7 @@ function TDSigEI(subjname)
 % Psychtoolbox script for TDSigEI paradigm.
 
 sca; 
-clear all;
+%clear all;
 
 
 %% Old stuff for using the external USB response box. keepin for now
@@ -25,11 +25,20 @@ delay_time = .5; %time of delay between stimulus
 
 %setup paths to load stimuli and write outputs
 
-data_dir='data'; %output
-face_dir='Faces'; %stimuli of faces
-house_dir='Houses'; %stimuli of houses
-curr_dir='..';
+data_dir = 'data'; %output
+face_dir = 'Faces'; %stimuli of faces
+house_dir = 'Houses'; %stimuli of houses
+curr_dir = '..';
 WD = pwd;
+
+%setup keyboard responses (if at scanner this will likely have to be different)
+KbName('UnifyKeyNames')
+
+%subjects will be asked to respond with either their right or left index if they detect a target.
+% they will be asked to place their right index finger on key "k", left index finger on key "d"
+RightIndex = KbName('k');  
+LeftIndex = KbName('d');
+
 
 %setup display options
 screens = Screen('Screens');
@@ -69,8 +78,13 @@ Screen('TextFont', window ,'Arial'); %set font
 Screen('TextSize', window, 26); %set fontsize
 %display instructions
 DrawFormattedText(window, 'Instruction of the task... blah blah blah', 'center',...
-    screenYpixels * 0.75, [0 0 1]);
+    screenYpixels * 0.35, [0 0 1]);
 Screen(window, 'Flip');
+
+% instruction should at least be on the scren for 10 sec
+starttime2 = GetSecs;
+while (GetSecs - starttime2 < 10)
+end
 
 %% stimulus preparation. Here is where we insert Akshay's function to load, overlay, and normalize the face/scenes images
 % for now just load a couple images to test..
@@ -87,15 +101,30 @@ cd(WD);
 
 %% organize block order
 Conditions = {'Fo', 'Ho', 'FH', 'HF'};
-1:Fo = face as target on top of scramble houses
-2:Ho = House as target on top of scramble faces
-3:FH = Face as target on top of house distractors
-4:HF = House as target on top of face distractors
+%1:Fo = face as target on top of scramble houses
+%2:Ho = House as target on top of scramble faces
+%3:FH = Face as target on top of house distractors
+%4:HF = House as target on top of face distractors
 
 % randomize the order of blocks (might want to pseudorandomize this later)
 block_conditions = randperm(4);
 
+% randomize response mode (with right or left hand)
+%1: use right hand
+%2: use left hand
+response_mode = [1 2 1 2];
+
 % a key stroke will end the instruction page
+Screen(window,'FillRect',grey);
+Screen(window, 'Flip');
+Screen('TextFont', window ,'Arial'); %set font
+Screen('TextSize', window, 26); %set fontsize
+%display instructions
+DrawFormattedText(window, 'Press any key to continue', 'center',...
+    screenYpixels * 0.35, [0 0 1]);
+Screen(window, 'Flip');
+
+
 keepchecking = 1;
 while (keepchecking == 1)
     [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
@@ -112,9 +141,12 @@ end
 % Insert a 2 second delay between instruction/practice and actual experiment. 
 Screen(window,'FillRect',grey);
 Screen(window, 'Flip');
-DrawFormattedText(window, 'Get Ready@', 'center',...
+Screen('TextSize', window, 80);
+DrawFormattedText(window, 'Get Ready!', 'center',...
     screenYpixels * 0.5, [0 0 1]);
 Screen(window, 'Flip');
+experiment_start_time = GetSecs;
+
 starttime2 = GetSecs;
 while (GetSecs - starttime2 < 2)
 end
@@ -129,7 +161,7 @@ data_str=[];
 %f_adapt_morph_rand=randperm(size(morph_pics,1));
 
 
-tr_num_cnt=0;
+tr_num_cnt = 0;
 
 for j = 1:block_num
     
@@ -141,13 +173,13 @@ for j = 1:block_num
         target_names = face_names;
     elseif (block_conditions(j) == 2 | block_conditions(j) == 4)
         target_images = house_images;
-        target_namess = house_names;
+        target_names = house_names;
     end
         
 
     %create sequence of 1-back match
-    selected_pics = randperm(30,12);
-    nback_matches = sort(randperm(11,3)+1);
+    selected_pics = randperm(30,trial_num_pbl);
+    nback_matches = sort(randperm(trial_num_pbl-1,3)+1);
     for i = 1:length(nback_matches)-1
         if nback_matches(i) == nback_matches(i+1)-1 
             nback_matches(i+1) = nback_matches(i+1)+1;
@@ -156,117 +188,137 @@ for j = 1:block_num
             nback_matches(i+1) = nback_matches(i+1)+2;
         end
     end
-    nback_matches(nback_matches>12) = [];
+    nback_matches(nback_matches>trial_num_pbl) = [];
+
+    % create responses
+    targets = zeros(1,trial_num_pbl);
+    targets(nback_matches) = 1;
 
     % this is the sequence of pictures that will be presented 
-    selected_pics(nback_matches) = selected_pics(nback_matches-1)
+    selected_pics(nback_matches) = selected_pics(nback_matches-1);
 
     pic_num = 0;
     for i = 1:length(selected_pics)
         
         %extract to be presented stimuli
-        pic_num=pic_num+1;
-        curr_pic=squeeze(target_images(selected_pics(pic_num),:,:,:));
-        curr_pic_name=target_names{selected_pics(pic_num)};
-        curr_picnum=selected_pics(pic_num);
+        pic_num = pic_num+1;
+        curr_pic = squeeze(target_images(selected_pics(pic_num),:,:,:));
+        curr_pic_name = target_names{selected_pics(pic_num)};
+        curr_picnum = selected_pics(pic_num);
 
         %present the stimuli
         Screen(window,'FillRect',grey);
         Screen(window,'PutImage',curr_pic,imageRect);
         Screen(window, 'Flip');
-        %DaqDOut(HID,0,1);  %This is the daq box setting, keep for now but prob irrelevant for our study
+        stim_onset_time = GetSecs - experiment_start_time;
         
         % logging RTs and key strokes
-        keepchecking = 1;
         RT=-1;
-        resp=-1;
-        
+        RightHand_resp = 0;
+        LeftHand_resp = 0;
+
         % trial time book keeping plus logging responses
-        trial_start_time=GetSecs;
+        trial_start_time = GetSecs;
         while (GetSecs - trial_start_time < stim_on_time)
-            [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the Z or / key is being pressed.
-            if find(keyCode==1)==29  % If key is being pressed...
-                RT=GetSecs-trial_start_time;
-            end
-
-            if find(keyCode==1)==56  % If key is being pressed...
-                RT=GetSecs-trial_start_time;
+            [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the k or d key is being pressed.
+            if keyCode(RightIndex)  % If k key is being pressed...
+                RT = GetSecs-trial_start_time;
+                RightHand_resp=1;
+            elseif keyCode(LeftIndex)   % If d key is being pressed...
+                RT = GetSecs-trial_start_time;
+                LeftHand_resp=1;
             end
         end
         
-        if find(keyCode==1)==56
-            resp=1;
-        elseif find(keyCode==1)==29
-            resp=0;
-        end
 
-        while ((GetSecs - trial_start_time) < stim_on_time) % ensure sufficeint stimulus presentation time
-        end
-
-
-        %DaqDOut(HID,0,0);  %Turn off
+        %while ((GetSecs - trial_start_time) < stim_on_time) % ensure sufficeint stimulus presentation time
+        %end
 
         %put up delay screen for ITI (fixation cross)
         Screen(window,'FillRect',grey);
         Screen('TextSize', window, 80);
         DrawFormattedText(window, '+', 'center',...
-            screenYpixels * 0.5, [0 0 1]);
+            'center', [0 0 1]);
         Screen(window, 'Flip');
-        starttime2=GetSecs; 
+        starttime2 = GetSecs; 
         while (GetSecs - starttime2 < delay_time)
         end
         
         
+        tr_corr = 0; %tr_corr = 1 is correct, 2 is false alarm, 0 is incorrect 
         %determine correct or incorrect
-        Screen(window,'FillRect',grey);
-        if resp == -1
-            tr_corr = -1;
-        elseif (resp+1)==trial_rand(i)
-            tr_corr = 1;
-        else
-            tr_corr = 0;
+        if response_mode(j) == 1
+            if any(LeftHand_resp) 
+                tr_corr = 2;
+            elseif targets(i) == RightHand_resp
+                tr_corr = 1;
+            end
+        elseif response_mode(j) == 2
+            if any(RightHand_resp) 
+                tr_corr = 2;
+            elseif targets(i) == LeftHand_resp
+                tr_corr = 1;
+            end
         end
         
         
-        tr_num_cnt=tr_num_cnt+1;
+        tr_num_cnt = tr_num_cnt+1;
         
-        %%%%%% getting stuck here!!! using 0 as index!!!!!
-        data_str = [data_str  '\t' num2str(trial_rand(i)) '\t' num2str(tr_corr) '\t' num2str(resp)  '\t' num2str(RT) '\t' num2str(curr_picnum) '\t' curr_pic_name '\n'];
-        data_mat(tr_num_cnt).ttype=num2str(trial_rand(i));
-        %        data_mat(i).tr_len=curr_tr_len;
-        data_mat(tr_num_cnt).catpic=curr_picnum;
-        data_mat(tr_num_cnt).resp=resp;
-        data_mat(tr_num_cnt).RT=RT;
-        data_mat(tr_num_cnt).cat_picname=curr_pic_name;
-        data_mat(tr_num_cnt).corr=tr_corr;
+        %% writing out logs
+        data_str = [data_str  '\t' ...
+            num2str(block_conditions(j)) '\t' ...
+            num2str(response_mode(j)) '\t' ...
+            num2str(targets(i)) '\t' ...
+            num2str(tr_corr) '\t' ...
+            num2str(RightHand_resp) '\t' ...
+            num2str(LeftHand_resp) '\t' ...
+            num2str(RT) '\t' ...
+            num2str(curr_picnum) '\t' ...
+            num2str(stim_onset_time) '\t' ...
+            curr_pic_name '\n'];
+
+        data_mat(tr_num_cnt).condition = num2str(block_conditions(j));
+        data_mat(tr_num_cnt).response_mode = num2str(response_mode(j));
+        data_mat(tr_num_cnt).nback_match = num2str(targets(i));
+        data_mat(tr_num_cnt).pic = curr_picnum;
+        data_mat(tr_num_cnt).Accu = tr_corr;
+        data_mat(tr_num_cnt).RT = RT;
+        data_mat(tr_num_cnt).cat_picname = curr_pic_name;
+        data_mat(tr_num_cnt).RightHand_resp = RightHand_resp;
+        data_mat(tr_num_cnt).LefttHand_resp = LeftHand_resp;
+        data_mat(tr_num_cnt).stim_onset_time = stim_onset_time;
         clear keyCode keyIsDown resp RT
-        eval(sprintf('cd %s',data_dir));
         
-        cmd = sprintf('fid = fopen(''Categorization_Data%s.txt'',''w'');',subjname);      %will call the data file datasubjname
-        eval(cmd);
-        fprintf(fid,data_str);
-        fclose(fid);
+        % conisder save on the go
+        % eval(sprintf('cd %s',data_dir));
+        % cmd = sprintf('fid = fopen(''Behav_Data_%s.txt'',''w'');',subjname);      %will call the data file datasubjname
+        % eval(cmd);
+        % fprintf(fid,data_str);
+        % fclose(fid);
         
-        eval(sprintf('save ''Categorization_Data%s.mat'' data_mat;',subjname));
+        % eval(sprintf('save ''Behav_Data_%s.mat'' data_mat;',subjname));
         
-        eval(sprintf('cd %s',curr_dir));
+        % eval(sprintf('cd %s',curr_dir));
  
     end
     
     if j < block_num
-        Screen(window,'FillRect',black);
-        centertext(window,'You have completed a block of the experiment and may now take a one minute break.',20,centery-40,centerx,centery,white);
-        centertext(window,'Remember to press the orange button for sunny and press the green button for rainy.',20,centery,centerx,centery,white);
-        %        centertext(window,'and press the "spacebar" if any body picture is repeated.',20,centery+40,centerx,centery,white);
+        Screen(window,'FillRect',grey);
+        Screen('TextSize', window, 80);
+        DrawFormattedText(window, 'You finished one block, \n take a 10 sec break, \n\n and press any key to continue', ...
+            'center',...
+            screenYpixels * 0.3, black);  
         Screen(window, 'Flip');
         starttime2 = GetSecs;
-        while (GetSecs - starttime2 < 60)
+        while (GetSecs - starttime2 < 10)
         end
         
         
-        Screen(window,'FillRect',black);
-        centertext(window,'Press any button to begin the next block.',20,centery-40,centerx,centery,white);
-        Screen(window, 'Flip');
+        % Screen(window,'FillRect',grey);
+        % Screen('TextSize', window, 80);
+        % DrawFormattedText(window, 'Press any key to continue', 'center',...
+        %     screenYpixels * 0.5, [0 0 1]); 
+        % Screen(window, 'Flip');
         keepchecking = 1;
         while (keepchecking == 1)
             [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
@@ -275,9 +327,13 @@ for j = 1:block_num
             end
         end
         
-        
-        Screen(window,'FillRect',black);
-        centertext(window,'+',20,centery-10,centerx,centery,white);
+        % the get ready screen to move back to the start of the block
+        Screen(window,'FillRect',grey);
+        Screen('TextSize', window, 80);
+        Screen(window, 'Flip');
+        DrawFormattedText(window, 'Get Ready!', 'center',...
+            screenYpixels * 0.5, [0 0 1]);
+        Screen(window, 'Flip');
         starttime2 = GetSecs;
         while (GetSecs - starttime2 < 2)
         end
@@ -286,14 +342,14 @@ end
 
 eval(sprintf('cd %s',data_dir));
 
-cmd = sprintf('fid = fopen(''Categorization_Data%s.txt'',''w'');',subjname);      %will call the data file datasubjname
+cmd = sprintf('fid = fopen(''Behav_Data_%s.txt'',''w'');',subjname);      %will call the data file datasubjname
 eval(cmd);
 fprintf(fid,data_str);
 fclose(fid);
 
-eval(sprintf('save ''Categorization_Data%s.mat'' data_mat;',subjname));
+eval(sprintf('save ''Behav_Data__%s.mat'' data_mat;',subjname));
 
 eval(sprintf('cd %s',curr_dir));
 
-screen('CloseAll')
+Screen('CloseAll')
 
