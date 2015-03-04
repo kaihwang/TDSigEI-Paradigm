@@ -4,6 +4,8 @@ function TDSigEI(subjname)
 sca; 
 %clear all;
 
+WD=pwd;
+addpath(WD);
 
 %% Old stuff for using the external USB response box. keepin for now
 % HID=DaqFind;
