@@ -57,14 +57,14 @@ trial_num_pbl = 12;
 %prac_trial_num=1;
 
 %setup trial timing
-instruction_on_screen_time = 10;
-inter_block_interval = 10;
+instruction_on_screen_time = 4;
+inter_block_interval = 6;
 initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
 %delay_time = .5; %time of delay between stimulus
-stim_on_time = 1; %time of stimulus on screen
-delay_time = .5; %time of delay between stimulus
+stim_on_time = .01; %time of stimulus on screen
+delay_time = .05; %time of delay between stimulus
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbName('UnifyKeyNames');
@@ -130,28 +130,28 @@ for block_conditions = sessions
     m = m+1;
     if motor_mapping(m) == 1
         response_mode = 1;
-        motor_instruction = '\n\n Please respond to faces by pressing your "RIGHT INDEX FINGER", \n and respond to houses by pressing your "LEFT INDEX FINGER"';
+        motor_instruction = '\n\n Please respond to faces by pressing the "k" key, \n and respond to houses by pressing the "d" key';
     elseif motor_mapping(m) == 2
         response_mode = 2;
-        motor_instruction = '\n\n Please respond to faces by pressing your "LEFT INDEX FINGER", \n and respond to houses by pressing your "RIGHT INDEX FINGER"';
+        motor_instruction = '\n\n Please respond to faces by pressing the "d" key, \n and respond to houses by pressing the "k" key';
     end
 
     % task instruction
     switch(block_conditions)
         case 1 %Fo
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture';
             
         case 2 %Ho
-            task_instruction = '\n\n Please pay attention to the house presented in each picture, \n and make a button press \n if the house you see matches the house presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the house presented in each picture, \n and make a key press \n if the house you see matches the house presented in the previous picture';
             
         case 3 %FH
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture';
         
         case 4 %HF
-            task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a button press \n if the house you see matches the house presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a key press \n if the house you see matches the house presented in the previous picture';
             
         case 5 %B
-            task_instruction = '\n\n Please pay attention to both the face \n and the house presented in each picture, \n and make a button press \n if either the house or the face you see \n matche the house or the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to both the face \n and the house presented in each picture, \n and make a key press \n if either the house or the face you see \n matche the house or the face presented in the previous picture';
             
         case 6 %Fp
             task_instruction = '\n\n Please respond everytime you see a face';
@@ -170,6 +170,8 @@ for block_conditions = sessions
     Screen('TextSize', window, 36);
     DrawFormattedText(window, [final_reminder, rest_reminder], 'center',...
                 screenYpixels * 0.65, [0 0 1]);
+    DrawFormattedText(window, 'Press any key to continue...', 'center',...
+        screenYpixels * 0.95, [0 0 1]);
     Screen(window, 'Flip');
     
     % instruction should at least be on the scren for 10 sec
@@ -241,17 +243,17 @@ for block_conditions = sessions
     %Screen(window, 'Flip');
     
     
-    %keepchecking = 1;
-    %while (keepchecking == 1)
-    %   [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
-    %   if(keyIsDown)  % If key is being pressed...
-    %       keepchecking = 0; % ... end while-loop.
-    %   end
-    %end
+    keepchecking = 1;
+    while (keepchecking == 1)
+       [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
+       if(keyIsDown)  % If key is being pressed...
+           keepchecking = 0; % ... end while-loop.
+       end
+    end
     
     
     
-    %% Insert a 6 seconds delay after instruction 
+    %% Insert a 2 seconds delay after instruction 
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
     Screen('TextSize', window, 80);
@@ -488,12 +490,19 @@ for block_conditions = sessions
         if j == block_num
             %% final rest 
             Screen(window,'FillRect',grey);
-            Screen('TextSize', window, 80);
+            Screen('TextSize', window, 46);
             Screen(window, 'Flip');
-            DrawFormattedText(window, 'Good Job! Wait for instruction please.', 'center',...
+            DrawFormattedText(window, 'Good Job! Please take a short break \n Press any key to continue to the next session', 'center',...
                 screenYpixels * 0.5, [0 0 1]);
             Screen(window, 'Flip');
-            WaitSecs(4);    
+            %WaitSecs(4); 
+            keepchecking = 1;
+            while (keepchecking == 1)
+                [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
+                if(keyIsDown)  % If key is being pressed...
+                keepchecking = 0; % ... end while-loop.
+            end
+        end   
         end
     end
 end
