@@ -63,8 +63,8 @@ initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
 %delay_time = .5; %time of delay between stimulus
-stim_on_time = .01; %time of stimulus on screen
-delay_time = .05; %time of delay between stimulus
+stim_on_time = 1; %time of stimulus on screen
+delay_time = .5; %time of delay between stimulus
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbName('UnifyKeyNames');
@@ -77,11 +77,12 @@ LeftIndex = KbName('d');
 
 
 %setup display options
-%Screen('Preference', 'SkipSyncTests', 1); %some timing stuff...
+Screen('Preference', 'SkipSyncTests', 1); %some timing stuff...
 screens = Screen('Screens');
 screenNumber = max(screens); %get external display if available
 %if want to hide mouse corsor, use Screen('HideCursorHelper',window);
 Priority(MaxPriority(screenNumber));
+instruction_font_size = 26;
 
 %setup colors
 white=WhiteIndex(screenNumber); % pixel value for white
@@ -119,7 +120,7 @@ for block_conditions = sessions
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
     Screen('TextFont', window ,'Arial'); %set font
-    Screen('TextSize', window, 36); %set fontsize
+    Screen('TextSize', window, instruction_font_size); %set fontsize
     
     % general instruction
     general_instruction = 'For this experiment, you will be seeing pictures of faces and houses. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented.';  
@@ -151,7 +152,7 @@ for block_conditions = sessions
             task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a key press \n if the house you see matches the house presented in the previous picture';
             
         case 5 %B
-            task_instruction = '\n\n Please pay attention to both the face \n and the house presented in each picture, \n and make a key press \n if either the house or the face you see \n matche the house or the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to both the face and the house \n presented in each picture, \n and make a key press \n if either the house or the face you see \n mathces the house or the face presented in the previous picture';
             
         case 6 %Fp
             task_instruction = '\n\n Please respond everytime you see a face';
@@ -164,10 +165,10 @@ for block_conditions = sessions
         
     DrawFormattedText(window, [general_instruction, motor_instruction], 'center',...
                 screenYpixels * 0.1, [0 0 1]);
-    Screen('TextSize', window, 46);
+    Screen('TextSize', window, instruction_font_size + 10);
     DrawFormattedText(window, [task_instruction], 'center',...
                 screenYpixels * 0.3, black);
-    Screen('TextSize', window, 36);
+    Screen('TextSize', window, instruction_font_size);
     DrawFormattedText(window, [final_reminder, rest_reminder], 'center',...
                 screenYpixels * 0.65, [0 0 1]);
     DrawFormattedText(window, 'Press any key to continue...', 'center',...
@@ -256,7 +257,7 @@ for block_conditions = sessions
     %% Insert a 2 seconds delay after instruction 
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
-    Screen('TextSize', window, 80);
+    Screen('TextSize', window, instruction_font_size+20);
     DrawFormattedText(window, 'Get Ready!', 'center',...
         screenYpixels * 0.5, [0 0 1]);
     Screen(window, 'Flip');
@@ -352,7 +353,7 @@ for block_conditions = sessions
             
             %put up delay screen for ITI (fixation cross)
             Screen(window,'FillRect',grey);
-            Screen('TextSize', window, 80);
+            Screen('TextSize', window, instruction_font_size+20);
             DrawFormattedText(window, '+', 'center',...
                 'center', [0 0 1]);
             Screen(window, 'Flip');
@@ -475,7 +476,7 @@ for block_conditions = sessions
             
             % the get ready screen to move back to the start of the block
             Screen(window,'FillRect',grey);
-            Screen('TextSize', window, 80);
+            Screen('TextSize', window, instruction_font_size+20);
             Screen(window, 'Flip');
             DrawFormattedText(window, 'Get Ready!', 'center',...
                 screenYpixels * 0.5, [0 0 1]);
@@ -490,7 +491,7 @@ for block_conditions = sessions
         if j == block_num
             %% final rest 
             Screen(window,'FillRect',grey);
-            Screen('TextSize', window, 46);
+            Screen('TextSize', window, instruction_font_size+10);
             Screen(window, 'Flip');
             DrawFormattedText(window, 'Good Job! Please take a short break \n Press any key to continue to the next session', 'center',...
                 screenYpixels * 0.5, [0 0 1]);
