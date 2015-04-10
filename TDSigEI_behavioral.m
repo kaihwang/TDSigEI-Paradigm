@@ -57,8 +57,8 @@ trial_num_pbl = 12;
 %prac_trial_num=1;
 
 %setup trial timing
-instruction_on_screen_time = 4;
-inter_block_interval = 6;
+instruction_on_screen_time = 2;
+inter_block_interval = 5;
 initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
@@ -72,8 +72,8 @@ KbName('UnifyKeyNames');
 % they will be asked to place their right index finger on key "k", left
 % index finger on key "d"\
 % this mapping will be different at the scanner....
-RightIndex = KbName('k');
-LeftIndex = KbName('d');
+RightIndex = KbName('3');
+LeftIndex = KbName('z');
 
 
 %setup display options
@@ -131,10 +131,10 @@ for block_conditions = sessions
     m = m+1;
     if motor_mapping(m) == 1
         response_mode = 1;
-        motor_instruction = '\n\n Please respond to faces by pressing the "k" key, \n and respond to houses by pressing the "d" key';
+        motor_instruction = '\n\n Please respond to faces by pressing the "3" key, \n and respond to houses by pressing the "z" key. \n please keep both hands on the keybaord at all times!';
     elseif motor_mapping(m) == 2
         response_mode = 2;
-        motor_instruction = '\n\n Please respond to faces by pressing the "d" key, \n and respond to houses by pressing the "k" key';
+        motor_instruction = '\n\n Please respond to faces by pressing the "z" key, \n and respond to houses by pressing the "3" key. \n Please keep both hands on the keyboard at all times!';
     end
 
     % task instruction
@@ -512,12 +512,12 @@ end
 %% write data
 eval(sprintf('cd %s',data_dir));
 
-cmd = sprintf('fid = fopen(''Behav_Data_%s_%s_%s.txt'',''w'');',subjname, cell2mat(Conditions(block_conditions)), motor_mapping);      %will call the data file datasubjname
+cmd = sprintf('fid = fopen(''%s.txt'',''w'');',subjname);      %will call the data file datasubjname
 eval(cmd);
 fprintf(fid,data_str);
 fclose(fid);
 
-eval(sprintf('save ''Behav_Data_%s_%s_%s.mat'' data_mat;',subjname, cell2mat(Conditions(block_conditions)), motor_mapping));
+eval(sprintf('save ''%s.mat'' data_mat;',subjname));
 
 eval(sprintf('cd %s',curr_dir));
 
@@ -529,7 +529,7 @@ function [stim_sequence, nback_matches] = make_nback(input_pics, trial_num_pbl)
 % function to generate nback match sequence. input will be a vector of picture index (input_pics)
 % and the number of trials (trial_num_pbl) in each block,
 % output will be the stimulus sequence index (stim_sequence), and the binary position vector where there is a match (nback_matches)
-nback_matches = sort(randperm(trial_num_pbl-1,3)+1);
+nback_matches = sort(randperm(trial_num_pbl-1,randi(3,1)+1)+1);
 for i = 1:length(nback_matches)-1
     if nback_matches(i) == nback_matches(i+1)-1
         nback_matches(i+1) = nback_matches(i+1)+1;
