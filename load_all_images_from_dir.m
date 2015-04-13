@@ -1,6 +1,8 @@
 function [image_matrix,image_names]=load_all_images_from_dir(directory)
 
+cwd=pwd;
 dir_name=dir(directory);
+cd(directory);
 counter_temp=0;
 
 for i = 1:length(dir_name)
@@ -17,3 +19,4 @@ for i = 1:length(dir_name)
 
     %image_names;
 end
+cd(cwd);
