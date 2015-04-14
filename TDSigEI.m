@@ -121,7 +121,7 @@ for block_conditions = sessions
     Screen('TextSize', window, 46); %set fontsize
     
     % general instruction
-    general_instruction = '\n\n For this experiment, you will be seeing pictures of faces and houses. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented. \n\n Please press any botton to continue.';  
+    general_instruction = '\n\n For this experiment, you will be seeing pictures of faces and houses. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented. \n\n Please press the right or the left botton to continue.';  
 
     %motor mapping instructions
     %1: M1, use right hand to respond to faces, use left hand respond to houses
@@ -129,28 +129,28 @@ for block_conditions = sessions
     m = m+1;
     if motor_mapping(m) == 1
         response_mode = 1;
-        motor_instruction = '\n\n Please respond to faces by pressing your "RIGHT INDEX FINGER", \n and respond to houses by pressing your "LEFT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press any botton to continue.';
+        motor_instruction = '\n\n Please respond to faces by pressing your "RIGHT INDEX FINGER", \n and respond to houses by pressing your "LEFT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
     elseif motor_mapping(m) == 2
         response_mode = 2;
-        motor_instruction = '\n\n Please respond to faces by pressing your "LEFT INDEX FINGER", \n and respond to houses by pressing your "RIGHT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press any botton to continue.';
+        motor_instruction = '\n\n Please respond to faces by pressing your "LEFT INDEX FINGER", \n and respond to houses by pressing your "RIGHT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
     end
 
     % task instruction
     switch(block_conditions)
         case 1 %Fo
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press any botton to continue.';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
             
         case 2 %Ho
-            task_instruction = '\n\n Please pay attention to the house presented in each picture, \n and make a button press \n if the house you see matches the house presented in the previous picture. \n\n Please press any botton to continue.';
+            task_instruction = '\n\n Please pay attention to the house presented in each picture, \n and make a button press \n if the house you see matches the house presented in the previous picture. \n\n Please press the right or the left botton to continue.';
             
         case 3 %FH
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press any botton to continue.';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
         
         case 4 %HF
-            task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a button press \n if the house you see matches the house presented in the previous picture. \n\n Please press any botton to continue.';
+            task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a button press \n if the house you see matches the house presented in the previous picture. \n\n Please press the right or the left botton to continue.';
             
         case 5 %B
-            task_instruction = '\n\n Please pay attention to both the face \n and the house presented in each picture, \n and make a button press \n if either the house or the face you see \n matches the house or the face presented in the previous picture. \n\n Please press any botton to continue.';
+            task_instruction = '\n\n Please pay attention to both the face \n and the house presented in each picture, \n and make a button press \n if either the house or the face you see \n matches the house or the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
             
         case 6 %Fp
             task_instruction = '\n\n Please respond everytime you see a face. \n\n Please press and botton to continue.';
@@ -159,7 +159,7 @@ for block_conditions = sessions
             task_instruction = '\n\n Please respond everytime you see a house. \n\n Please press and botton to continue.';
     end
     final_reminder = ' \n\n Please remember to respond with the correct hand, \n and look at the center of the screen throughout the experiement. ';
-    rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready!" \n\n Please press any botton to continue.';
+    rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready!" \n\n Please press the right or the left botton to continue.';
         
     DrawFormattedText(window, [general_instruction], 'center',...
                 screenYpixels * 0.35, [0 0 1]);
@@ -264,7 +264,7 @@ for block_conditions = sessions
         end
       end
     end
-    
+    experiment_start_time = GetSecs;
     
     
     %% Insert a 2 seconds delay after instruction 
@@ -273,8 +273,7 @@ for block_conditions = sessions
     Screen('TextSize', window, 80);
     DrawFormattedText(window, 'Get Ready!', 'center',...
         screenYpixels * 0.5, [0 0 1]);
-    Screen(window, 'Flip');
-    experiment_start_time = GetSecs;
+    Screen(window, 'Flip'); 
     WaitSecs(initial_wait_time);
     %starttime2 = GetSecs;
     %while (GetSecs - starttime2 < initial_wait_time)
@@ -517,13 +516,13 @@ end
 
 %% write data
 eval(sprintf('cd %s',data_dir));
-
-cmd = sprintf('fid = fopen(''fMRI_Data_%s.txt'',''w'');',subjname);      %will call the data file datasubjname
+timestamp = strcat(datestr(clock,'yyyy-mm-dd-HHMM'),'m',datestr(clock,'ss'),'s');
+cmd = sprintf('fid = fopen(''fMRI_Data_%s_%s.txt'',''w'');',subjname, timestamp);      %will call the data file datasubjname
 eval(cmd);
 fprintf(fid,data_str);
 fclose(fid);
 
-eval(sprintf('save ''fMRI_Data_%s.mat'' data_mat;',subjname));
+eval(sprintf('save ''fMRI_Data_%s_%s.mat'' data_mat;',subjname, timestamp));
 
 eval(sprintf('cd %s',curr_dir));
 
@@ -563,5 +562,4 @@ while (keepchecking == 1)
         end    
     end
 end
-
 end
