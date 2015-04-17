@@ -376,30 +376,31 @@ for block_conditions = sessions
             
             %% determine accuracy of responses
             tr_corr = 0; %tr_corr = 1 is correct, 2 is false alarm, 0 is incorrect
+            false_alarm = 0;
             %determine correct or incorrect
             %mode 1 , face with right, house with left
             %mode 2,  face with left, house with right
             if response_mode == 1 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M1
                 if any(LeftHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 2;
                 elseif targets(i) == RightHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 1 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M1
                 if any(RightHand_resp)
-                    tr_corr = 2;
+                    false_alarm =2;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 2 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M2
                 if any(RightHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 2;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 2 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M2
                 if any(LeftHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 2;
                 elseif targets(i) == RightHand_resp
                     tr_corr = 1;
                 end
@@ -432,21 +433,24 @@ for block_conditions = sessions
             
             tr_num_cnt = tr_num_cnt+1;
             %% organize data logs
-            data_str = [data_str  '\t' ...
+            data_str = [data_str  subjname(1:4) '\t' ...
                 cell2mat(Conditions(block_conditions)) '\t' ...
                 num2str(response_mode) '\t' ...
                 num2str(targets(i)) '\t' ...
                 num2str(tr_corr) '\t' ...
+                num2str(false_alarm) '\t' ...
                 num2str(RightHand_resp) '\t' ...
                 num2str(LeftHand_resp) '\t' ...
                 num2str(RT) '\t' ...
                 num2str(stim_onset_time) '\t' ...
                 curr_pic_name '\n'];
             
+            data_mat(tr_num_cnt).subj = subjname(1:4);
             data_mat(tr_num_cnt).condition = Conditions(block_conditions);
             data_mat(tr_num_cnt).response_mode = num2str(response_mode);
             data_mat(tr_num_cnt).nback_match = num2str(targets(i));
             data_mat(tr_num_cnt).Accu = tr_corr;
+            data_mat(tr_num_cnt).false_alarm = false_alarm;
             data_mat(tr_num_cnt).RT = RT;
             data_mat(tr_num_cnt).cat_picname = curr_pic_name;
             data_mat(tr_num_cnt).RightHand_resp = RightHand_resp;
