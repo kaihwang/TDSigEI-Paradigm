@@ -153,10 +153,10 @@ for block_conditions = sessions
             task_instruction = '\n\n Please pay attention to both the face \n and the building presented in each picture, \n and make a button press \n if either the building or the face you see \n matches the building or the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
             
         case 6 %Fp
-            task_instruction = '\n\n Please respond everytime you see a face. \n\n Please press and botton to continue.';
+            task_instruction = '\n\n Please respond everytime you see a face. \n\n Please press the right or left botton to continue.';
             
         case 7 %Hp
-            task_instruction = '\n\n Please respond everytime you see a building. \n\n Please press and botton to continue.';
+            task_instruction = '\n\n Please respond everytime you see a building. \n\n Please press the right or left botton to continue.';
     end
     final_reminder = ' \n\n Please remember to respond with the correct hand, \n and look at the center of the screen throughout the experiement. ';
     rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready!" \n\n Please press the right or the left botton to continue.';
@@ -248,7 +248,7 @@ for block_conditions = sessions
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
     Screen('TextFont', window ,'Arial'); %set font
-    Screen('TextSize', window, 46); %set fontsize
+    Screen('TextSize', window, 30); %set fontsize
     DrawFormattedText(window, 'Wait for scanner to start', 'center',...
         screenYpixels * 0.5, [0 0 1]);
     Screen(window, 'Flip');
@@ -270,7 +270,7 @@ for block_conditions = sessions
     %% Insert a 2 seconds delay after instruction 
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
-    Screen('TextSize', window, 80);
+    Screen('TextSize', window, 30);
     DrawFormattedText(window, 'Get Ready!', 'center',...
         screenYpixels * 0.5, [0 0 1]);
     Screen(window, 'Flip'); 
@@ -487,7 +487,7 @@ for block_conditions = sessions
             
             % the get ready screen to move back to the start of the block
             Screen(window,'FillRect',grey);
-            Screen('TextSize', window, 80);
+            Screen('TextSize', window, 30);
             Screen(window, 'Flip');
             DrawFormattedText(window, 'Get Ready!', 'center',...
                 screenYpixels * 0.5, [0 0 1]);
