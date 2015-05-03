@@ -24,6 +24,12 @@ function TDSigEI(subjname, sessions, motor_mapping)
 %  2:M2 Face - respond with left index finger; House - respond with right index finger
 % the number of elements in motor mapping must match number of elements in the session vector.
 %
+% Example usage. Block sequence use these two vectors:
+% [7 1 4 6 2 3], [6 2 3 7 1 4]
+% then cross with the following two motor mapping vectors
+% [1 1 1 1 1 1], [2 2 2 2 2 2]
+% The order should be counterbalanced across subjects. 
+%
 %% sanity check
 if any(sessions > 7) || any (sessions< 1)
     error('entered wrong session vector!!');
