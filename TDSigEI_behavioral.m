@@ -63,8 +63,8 @@ initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
 %delay_time = .5; %time of delay between stimulus
-stim_on_time = 1; %time of stimulus on screen
-delay_time = .5; %time of delay between stimulus
+stim_on_time = 0.6; %time of stimulus on screen
+delay_time = 0.9; %time of delay between stimulus
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbName('UnifyKeyNames');
@@ -93,8 +93,8 @@ orange=[250 125 0];
 grey=[127 127 127];
 
 %set transparency for each stimulus category
-face_alpha = 0.7;
-house_alpha = 0.3;
+face_alpha = 0.5;
+house_alpha = 0.35;
 
 %open an window
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey);
@@ -123,7 +123,7 @@ for block_conditions = sessions
     Screen('TextSize', window, instruction_font_size); %set fontsize
     
     % general instruction
-    general_instruction = 'For this experiment, you will be seeing pictures of faces and houses. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented.';  
+    general_instruction = 'For this experiment, you will be seeing pictures of faces and buildings. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented.';  
 
     %motor mapping instructions
     %1: M1, use right hand to respond to faces, use left hand respond to houses
@@ -131,55 +131,64 @@ for block_conditions = sessions
     m = m+1;
     if motor_mapping(m) == 1
         response_mode = 1;
-        motor_instruction = '\n\n Please respond to faces by pressing the "3" key, \n and respond to houses by pressing the "z" key. \n please keep both hands on the keybaord at all times!';
+        motor_instruction = '\n\n Please place your right index finger on the far right "3" key on the numpad, \n and respond to faces by pressing the "3" key. \n Please place your left index finger on "z" key, \n and respond to buildings by pressing the "z" key. \n please keep both hands on the keyboard at all times! \n\n Please press the right or left index finger to continue.';
     elseif motor_mapping(m) == 2
         response_mode = 2;
-        motor_instruction = '\n\n Please respond to faces by pressing the "z" key, \n and respond to houses by pressing the "3" key. \n Please keep both hands on the keyboard at all times!';
+        motor_instruction = '\n\n Please place your left index finger on the "z" key, \n and respond to faces by pressing the "z" key. \n Please place your right index finger on the far right "3" key on the numpad, \n and and respond to buildings by pressing the "3" key. \n Please keep both hands on the keyboard at all times! \n\n Please press the right or left index finger to continue.';
     end
 
     % task instruction
     switch(block_conditions)
         case 1 %Fo
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or left index finger to continue.';
             
         case 2 %Ho
-            task_instruction = '\n\n Please pay attention to the house presented in each picture, \n and make a key press \n if the house you see matches the house presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the building presented in each picture, \n and make a key press \n if the building you see matches the house presented in the previous picture. \n\n Please press the right or left index finger to continue.';
             
         case 3 %FH
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a key press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or left index finger to continue.';
         
         case 4 %HF
-            task_instruction = '\n\n Please pay attention to the house presented in each picture,, \n and make a key press \n if the house you see matches the house presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to the building presented in each picture,, \n and make a key press \n if the house you see matches the building presented in the previous picture. \n\n Please press the right or left index finger to continue.';
             
         case 5 %B
-            task_instruction = '\n\n Please pay attention to both the face and the house \n presented in each picture, \n and make a key press \n if either the house or the face you see \n mathces the house or the face presented in the previous picture';
+            task_instruction = '\n\n Please pay attention to both the face and the building \n presented in each picture, \n and make a key press \n if either the building or the face you see \n matches the house or the face presented in the previous picture. \n\n Please press the right or left index finger to continue.';
             
         case 6 %Fp
-            task_instruction = '\n\n Please respond everytime you see a face';
+            task_instruction = '\n\n Please respond everytime you see a face. \n\n Please press the right or left index finger to continue.';
             
         case 7 %Hp
-            task_instruction = '\n\n Please respond everytime you see a house';
+            task_instruction = '\n\n Please respond everytime you see a building. \n\n Please press the right or left index finger to continue.';
     end
     final_reminder = ' \n\n Please remember to respond with the correct hand, \n and look at the center of the screen throughout the experiement.';
-    rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready!"';
+    rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready! \n\n Please press the right or left index finger to continue."';
         
     DrawFormattedText(window, [general_instruction, motor_instruction], 'center',...
-                screenYpixels * 0.1, [0 0 1]);
-    Screen('TextSize', window, instruction_font_size + 10);
+                screenYpixels * 0.35, [0 0 1]);
+    Screen(window, 'Flip');
+    WaitSecs(1.5);
+    check_keypress(RightIndex,LeftIndex);
+
     DrawFormattedText(window, [task_instruction], 'center',...
-                screenYpixels * 0.3, black);
-    Screen('TextSize', window, instruction_font_size);
+                screenYpixels * 0.35, black);
+    Screen(window, 'Flip');
+    WaitSecs(1.5);
+    check_keypress(RightIndex,LeftIndex);
+
     DrawFormattedText(window, [final_reminder, rest_reminder], 'center',...
-                screenYpixels * 0.65, [0 0 1]);
+                screenYpixels * 0.35, [0 0 1]);
+    Screen(window, 'Flip');
+    WaitSecs(1.5);
+    check_keypress(RightIndex,LeftIndex);
     DrawFormattedText(window, 'Press any key to continue...', 'center',...
-        screenYpixels * 0.95, [0 0 1]);
+        screenYpixels * 0.35, [0 0 1]);
     Screen(window, 'Flip');
     
     % instruction should at least be on the scren for 10 sec
     %starttime2 = GetSecs;
     %while (GetSecs - starttime2 < instruction_on_screen_time)
     %end
-    WaitSecs(instruction_on_screen_time);
+    %WaitSecs(instruction_on_screen_time);
     
     %% Stimulus preparation based on task conditions
     Conditions = {'Fo', 'Ho', 'FH', 'HF', 'B', 'Fp', 'Hp'};
@@ -197,7 +206,7 @@ for block_conditions = sessions
     %Face_ScrambleImages = ScrambleImage(Face_Images);
     %House_ScrambleImages = ScrambleImage(House_Images);
     % here is a presaved image set
-    load Images_Set.mat;
+    load Images_Set_Shine.mat;
     
     % extract stimuli set depending on the condition.
     switch(block_conditions)
@@ -364,30 +373,31 @@ for block_conditions = sessions
             
             %% determine accuracy of responses
             tr_corr = 0; %tr_corr = 1 is correct, 2 is false alarm, 0 is incorrect
+            false_alarm = 0;
             %determine correct or incorrect
             %mode 1 , face with right, house with left
             %mode 2,  face with left, house with right
             if response_mode == 1 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M1
                 if any(LeftHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 1;
                 elseif targets(i) == RightHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 1 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M1
                 if any(RightHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 1;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 2 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M2
                 if any(RightHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 1;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
             elseif response_mode == 2 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M2
                 if any(LeftHand_resp)
-                    tr_corr = 2;
+                    false_alarm = 1;
                 elseif targets(i) == RightHand_resp
                     tr_corr = 1;
                 end
@@ -420,21 +430,24 @@ for block_conditions = sessions
             
             tr_num_cnt = tr_num_cnt+1;
             %% organize data logs
-            data_str = [data_str  '\t' ...
+            data_str = [data_str  subjname(1:4) '\t' ...
                 cell2mat(Conditions(block_conditions)) '\t' ...
                 num2str(response_mode) '\t' ...
                 num2str(targets(i)) '\t' ...
                 num2str(tr_corr) '\t' ...
+                num2str(false_alarm) '\t' ...
                 num2str(RightHand_resp) '\t' ...
                 num2str(LeftHand_resp) '\t' ...
                 num2str(RT) '\t' ...
                 num2str(stim_onset_time) '\t' ...
                 curr_pic_name '\n'];
             
+            data_mat(tr_num_cnt).subj = subjname(1:4);
             data_mat(tr_num_cnt).condition = Conditions(block_conditions);
             data_mat(tr_num_cnt).response_mode = num2str(response_mode);
             data_mat(tr_num_cnt).nback_match = num2str(targets(i));
             data_mat(tr_num_cnt).Accu = tr_corr;
+            data_mat(tr_num_cnt).false_alarm = false_alarm;
             data_mat(tr_num_cnt).RT = RT;
             data_mat(tr_num_cnt).cat_picname = curr_pic_name;
             data_mat(tr_num_cnt).RightHand_resp = RightHand_resp;
@@ -511,13 +524,13 @@ end
 
 %% write data
 eval(sprintf('cd %s',data_dir));
-
-cmd = sprintf('fid = fopen(''%s.txt'',''w'');',subjname);      %will call the data file datasubjname
+timestamp = strcat(datestr(clock,'yyyy-mm-dd-HHMM'),'m',datestr(clock,'ss'),'s');
+cmd = sprintf('fid = fopen(''%s_%s.txt'',''w'');',subjname, timestamp);      %will call the data file datasubjname
 eval(cmd);
 fprintf(fid,data_str);
 fclose(fid);
 
-eval(sprintf('save ''%s.mat'' data_mat;',subjname));
+eval(sprintf('save ''%s_%s.mat'' data_mat;',subjname, timestamp));
 
 eval(sprintf('cd %s',curr_dir));
 
@@ -542,4 +555,18 @@ nback_matches(nback_matches > trial_num_pbl) = [];
 selected_pics = input_pics;
 selected_pics(nback_matches) = input_pics(nback_matches-1);
 stim_sequence = selected_pics;
+end
+
+function check_keypress(RightIndex,LeftIndex)
+keepchecking = 1;
+clear keyCode keyIsDown
+while (keepchecking == 1)
+    [keyIsDown,secs,keyCode] = KbCheck(-1); % In while-loop, rapidly and continuously check if the return key being pressed.
+    if(keyIsDown)  % If key is being pressed...
+        if keyCode(RightIndex) || keyCode(LeftIndex) 
+            keepchecking = 0;
+            break % ... end while-loop.
+        end    
+    end
+end
 end
