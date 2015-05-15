@@ -68,8 +68,8 @@ initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
 %delay_time = .5; %time of delay between stimulus
-stim_on_time = 1; %time of stimulus on screen
-delay_time = .5; %time of delay between stimulus
+stim_on_time = .6; %time of stimulus on screen
+delay_time = .9; %time of delay between stimulus
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbName('UnifyKeyNames');

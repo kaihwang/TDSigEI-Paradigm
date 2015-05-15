@@ -52,7 +52,7 @@ house_dir = 'Houses'; %stimuli of houses
 curr_dir = '..';
 
 %setup number of blocks, number of trials within blocks
-block_num = 4;
+block_num = 2;
 trial_num_pbl = 12;
 %prac_trial_num=1;
 
