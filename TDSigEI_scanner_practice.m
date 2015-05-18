@@ -1,4 +1,4 @@
-function TDSigEI(subjname, sessions, motor_mapping)
+function TDSigEI_scanner_practice(subjname, sessions, motor_mapping)
 % Psychtoolbox script for TDSigEI paradigm.
 % Usage TDSigEI(subjname, sessions, motor_mapping)
 %

@@ -1,4 +1,4 @@
-function TDSigEI(subjname, sessions, motor_mapping)
+function data_mat = TDSigEI(subjname, sessions, motor_mapping)
 % Psychtoolbox script for TDSigEI paradigm.
 % Usage TDSigEI(subjname, sessions, motor_mapping)
 %
