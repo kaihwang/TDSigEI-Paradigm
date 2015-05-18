@@ -58,7 +58,7 @@ house_dir = 'Houses'; %stimuli of houses
 curr_dir = '..';
 
 %setup number of blocks, number of trials within blocks
-block_num = 4;
+block_num = 2;
 trial_num_pbl = 12;
 %prac_trial_num=1;
 
@@ -80,7 +80,7 @@ KbName('UnifyKeyNames');
 % this mapping will be different at the scanner....
 RightIndex = KbName('4$');
 LeftIndex = KbName('1!');
-TTL = KbName('5%');
+TTL = KbName('4$');
 
 %setup display options
 %Screen('Preference', 'SkipSyncTests', 1); %some timing stuff...
@@ -257,7 +257,7 @@ for block_conditions = sessions
     Screen(window, 'Flip');
     Screen('TextFont', window ,'Arial'); %set font
     Screen('TextSize', window, 30); %set fontsize
-    DrawFormattedText(window, 'Wait for scanner to start', 'center',...
+    DrawFormattedText(window, 'Please press the right button to get started', 'center',...
         screenYpixels * 0.5, [0 0 1]);
     Screen(window, 'Flip');
  
