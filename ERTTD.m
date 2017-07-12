@@ -52,10 +52,10 @@ sca;
 %setup paths to load stimuli and write outputs
 WD = pwd;
 addpath(WD);
-data_dir = 'data'; %output
-face_dir = 'Faces'; %stimuli of faces
-house_dir = 'Houses'; %stimuli of houses
-curr_dir = '..';
+data_dir = fullfile(WD, 'data'); %output
+face_dir = fullfile(WD, 'Faces'); %stimuli of faces
+house_dir = fullfile(WD, 'Houses'); %stimuli of houses
+curr_dir = WD;
 
 %setup number of blocks, number of trials within blocks
 block_num = 4;
@@ -300,7 +300,7 @@ for block_conditions = sessions
     for j = 1:block_num
         
         %create ITI sequence
-        ITIs = delay_times(randperm(11))
+        ITIs = delay_times(randperm(11));
         ITIs(12) = 1.5
 
         %%create sequence of 1-back match
@@ -555,10 +555,17 @@ for block_conditions = sessions
 
         if j == block_num
             %% final rest
+
             Screen(window,'FillRect',grey);
-            Screen('DrawDots', window, [xCenter yCenter], 35, green, [], 2); %green dot in the center
+            Screen('TextSize', window, 80);
+            DrawFormattedText(window, '+', 'center',...
+                'center', [0 0 1]);
             Screen(window, 'Flip');
-            WaitSecs(10); %final rest
+
+            %Screen(window,'FillRect',grey);
+            %Screen('DrawDots', window, [xCenter yCenter], 35, green, [], 2); %green dot in the center
+            %Screen(window, 'Flip');
+            WaitSecs(3); %final rest
 
             experiment_end_time = GetSecs - experiment_start_time
 
