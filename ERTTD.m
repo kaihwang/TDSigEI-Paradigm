@@ -32,7 +32,7 @@ function data_mat = ERTTD(subjname, sessions, motor_mapping)
 %
 
 %% sanity check
-if any(sessions > 7) || any (sessions< 1)
+if any(sessions > 10) || any (sessions< 1)
     error('entered wrong session vector!!');
 
 end
@@ -132,7 +132,7 @@ for block_conditions = sessions
     Screen('TextSize', window, 26); %set fontsize
     
     % general instruction
-    general_instruction = '\n\n For this experiment, you will be seeing pictures of faces and buildings. \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented. \n\n Please press the right or the left botton to continue.';  
+    general_instruction = '\n\n For this experiment, you will be seeing pictures of \n"Faces and Buildings". \n These pictures will be presented sequentially. \n You will be asked to respond to the pictures presented. \n\n Please press the right or the left botton to continue.';  
 
     %motor mapping instructions
     %1: M1, use right hand to respond to faces, use left hand respond to houses
@@ -140,58 +140,65 @@ for block_conditions = sessions
     m = m+1;
     if motor_mapping(m) == 1
         response_mode = 1;
-        motor_instruction = '\n\n Please respond to picture of faces by pressing your "RIGHT INDEX FINGER", \n and respond to picture of buildings by pressing your "LEFT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
+        motor_instruction = '\nPlease respond to picture of faces by pressing your \n"RIGHT INDEX FINGER", \n\n and respond to picture of buildings by pressing your \n"LEFT INDEX FINGER". \n\n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
     elseif motor_mapping(m) == 2
         response_mode = 2;
-        motor_instruction = '\n\n Please respond to picture of faces by pressing your "LEFT INDEX FINGER", \n and respond to picture of buildings by pressing your "RIGHT INDEX FINGER". \n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
+        motor_instruction = '\nPlease respond to picture of faces by pressing your \n"LEFT INDEX FINGER", \n\n and respond to picture of buildings by pressing your \n"RIGHT INDEX FINGER". \n\n Please keep both hands on the response box at all times. \n\n Please press the right or the left botton to continue.';
     end
 
     % task instruction
     switch(block_conditions)
-        case 1 %Fo
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
+        case 1 %Fo 1bk
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n\n and make a button press \n\n if the face you see MATCHES the face \npresented in the "PREVIOUS PICTURE". \n\n Ohterwise do not respond. \n\n Please press the right or the left botton to continue.';
             
-        case 2 %Ho
-            task_instruction = '\n\n Please pay attention to the building presented in each picture, \n and make a button press \n if the building you see matches the building presented in the previous picture. \n\n Please press the right or the left botton to continue.';
+        case 2 %Ho 1bk
+            task_instruction = '\n\n Please pay attention to the building presented in each picture, \n\n and make a button press \n\n if the building you see MATCHES the building \npresented in the "PREVIOUS PICTURE". \n\n Ohterwise do not respond. \n\n Please press the right or the left botton to continue.';
             
-        case 3 %FH
-            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n and make a button press \n if the face you see matches the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
+        case 3 %FH 1bk
+            task_instruction = '\n\n Please pay attention to the faces presented in each picture, \n\n and make a button press \n\n if the face you see MATCHES the face \npresented in the "PREVIOUS PICTURE". \n\n Ohterwise do not respond.\n\n Please press the right or the left botton to continue.';
         
-        case 4 %HF
-            task_instruction = '\n\n Please pay attention to the building presented in each picture,, \n and make a button press \n if the building you see matches the building presented in the previous picture. \n\n Please press the right or the left botton to continue.';
+        case 4 %HF 1bk
+            task_instruction = '\n\n Please pay attention to the building presented in each picture,, \n\n and make a button press \n\n if the building you see MATCHES the building \npresented in the "PREVIOUS PICTURE". \n\n Ohterwise do not respond. \n\n Please press the right or the left botton to continue.';
             
         case 5 %B
-            task_instruction = '\n\n Please pay attention to both the face \n and the building presented in each picture, \n and make a button press \n if either the building or the face you see \n matches the building or the face presented in the previous picture. \n\n Please press the right or the left botton to continue.';
+            task_instruction = '\n\n Please pay attention to both the face \n and the building presented in each picture, \n\n and make a button press \n\n if either the building or the face you see \n MATCHES the building or the face \npresented in the "PREVIOUS PICTURE". \n\n Ohterwise do not respond.\n\n Please press the right or the left botton to continue.';
             
         case 6 %Fp
-            task_instruction = '\n\n Please respond everytime you see a face. \n You do NOT have to match the face to the previously presented face, \njust respond with a button press you see a face. \n\n Please press the right or left botton to continue.';
+            task_instruction = '\n\n Please respond everytime you see a face. \n You DO NOT have to match the face \nto the previously presented face, \n\njust respond with a button press everytime you see a face. \n\n Please press the right or left botton to continue.';
             
         case 7 %Hp
-            task_instruction = '\n\n Please respond everytime you see a building. \n You do NOT have to match the building to the previously presented building, \njust respond with a botton press everytime you see a building.  \n\n Please press the right or left botton to continue.';
+            task_instruction = '\n\n Please respond everytime you see a building. \n You DO NOT have to match the building \nto the previously presented building, \n\njust respond with a botton press everytime you see a building.  \n\n Please press the right or left botton to continue.';
+        
+        case 8 %FH2bk
+            task_instruction = '\n\n Please pay attention to the face presented in each picture, \n\n and make a button press \n\n if the face you see MATCHES the face \npresented "BEFORE the LAST picture (TWO positions back)". \n\n Ohterwise do not respond. \n\n Please press the right or the left botton to continue.';
+        
+        case 9 %HF2bk
+            task_instruction = '\n\n Please pay attention to the building presented in each picture, \n\n and make a button press \n\n if the building you see MATCHES the building \npresented "BEFORE the LAST picture (TWO positions back)". \n\n Ohterwise do not respond. \n\n Please press the right or the left botton to continue.';
+         
     end
     final_reminder = ' \n\n Please remember to respond with the correct hand, \n and look at the center of the screen throughout the experiement. ';
-    rest_reminder = '\n\n After completing a chunk of trials you will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again when you see "Get Ready!" \n\n Please press the right or the left botton to continue.';
+    rest_reminder = '\n\n After completing a chunk of trials \nyou will a see a green dot in the screen, \n please relax but stay still and focus on the green dot. \n You will be prompt to start the experiment again, \nwhen you see "Get Ready!" \n\n Please press the right or the left botton to continue.';
         
     DrawFormattedText(window, [general_instruction], 'center',...
-                screenYpixels * 0.35, [0 0 1]);
+                screenYpixels * 0.2, [0 0 1]);
     Screen(window, 'Flip');
     WaitSecs(.5);
     check_keypress(RightIndex,LeftIndex);
 
     DrawFormattedText(window, [motor_instruction], 'center',...
-                screenYpixels * 0.35, [0 0 1]);
+                screenYpixels * 0.2, [0 0 1]);
     Screen(window, 'Flip');
     WaitSecs(.5);
     check_keypress(RightIndex,LeftIndex);
 
     DrawFormattedText(window, [task_instruction], 'center',...
-                screenYpixels * 0.25, black);
+                screenYpixels * 0.2, black);
     Screen(window, 'Flip');
     WaitSecs(.5);
     check_keypress(RightIndex,LeftIndex);
 
     DrawFormattedText(window, [final_reminder, rest_reminder], 'center',...
-                screenYpixels * 0.25, [0 0 1]);
+                screenYpixels * 0.2, [0 0 1]);
     Screen(window, 'Flip');
     WaitSecs(.1);
     check_keypress(RightIndex,LeftIndex);
@@ -203,7 +210,7 @@ for block_conditions = sessions
     %WaitSecs(instruction_on_screen_time);
     
     %% Stimulus preparation based on task conditions
-    Conditions = {'Fo', 'Ho', 'FH', 'HF', 'B', 'Fp', 'Hp'};
+    Conditions = {'Fo', 'Ho', 'FH', 'HF', 'B', 'Fp', 'Hp', 'F2', 'H2'};
     %1:Fo = face as target on top of scramble houses
     %2:Ho = House as target on top of scramble faces
     %3:FH = Face as target on top of house distractors
@@ -258,6 +265,18 @@ for block_conditions = sessions
             distractor_images = Face_ScrambleImages * face_alpha;
             distractor_names = Face_Names;
             %mask_images = House_ScrambleImages;
+        case 8
+            target_images = Face_Images * face_alpha;
+            target_names = Face_Names;
+            distractor_images = House_Images * house_alpha;
+            distractor_names = House_Names;
+            %mask_images = Face_ScrambleImages;
+        case 9
+            target_images = House_Images * house_alpha;
+            target_names = House_Names;
+            distractor_images = Face_Images * face_alpha;
+            distractor_names = Face_Names;
+            %mask_images = House_ScrambleImages;            
     end
     
     
@@ -316,8 +335,21 @@ for block_conditions = sessions
                 targets(nback_matches) = 1;
                 
                 % create nback match seqeunce for distractors, so that
-                % distractors also can be repeated luring false responses
+                % distractors also can be repeated to lure false responses
                 [distractor_sequence,~] = make_nback(randperm(60, trial_num_pbl), trial_num_pbl);
+            
+            case num2cell([8 9]) %2bk
+                %selected_pics = randperm(60, trial_num_pbl); %the total set is 60 pictures per category
+                % create nback match sequence for targets.
+                [selected_pics, nback_matches] = make_2back(randperm(60, trial_num_pbl), trial_num_pbl);
+                
+                % create responses
+                targets = zeros(1,trial_num_pbl);
+                targets(nback_matches) = 1
+                
+                % create nback match seqeunce for distractors, so that
+                % distractors also can be repeated to lure false responses
+                [distractor_sequence,~] = make_2back(randperm(60, trial_num_pbl), trial_num_pbl);                
                 
             case 5 % create two streams of n-back matches
                 B_selected_pics = [];
@@ -347,7 +379,7 @@ for block_conditions = sessions
             %pic_num = pic_num+1;
             %extract to be presented stimuli
             switch(block_conditions)
-                case num2cell([1 2 3 4 6 7])
+                case num2cell([1 2 3 4 6 7 8 9])
                     
                     curr_pic =  (squeeze(target_images(selected_pics(i),:,:,:)) + squeeze(distractor_images(distractor_sequence(i),:,:,:)));
                     curr_pic_name = strcat(target_names{selected_pics(i)}, '___', distractor_names{distractor_sequence(i)} );
@@ -435,25 +467,25 @@ for block_conditions = sessions
             %determine correct or incorrect
             %mode 1 , face with right, house with left
             %mode 2,  face with left, house with right
-            if response_mode == 1 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M1
+            if response_mode == 1 && (block_conditions == 1 || block_conditions ==3 || block_conditions ==8 ) %face as target, M1
                 if any(LeftHand_resp)
                     false_alarm = 2;
                 elseif targets(i) == RightHand_resp
                     tr_corr = 1;
                 end
-            elseif response_mode == 1 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M1
+            elseif response_mode == 1 && (block_conditions == 2 || block_conditions ==4 || block_conditions ==9 ) %house as target, M1
                 if any(RightHand_resp)
                     false_alarm =2;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
-            elseif response_mode == 2 && (block_conditions == 1 || block_conditions ==3 ) %face as target, M2
+            elseif response_mode == 2 && (block_conditions == 1 || block_conditions ==3 || block_conditions ==8 ) %face as target, M2
                 if any(RightHand_resp)
                     false_alarm = 2;
                 elseif targets(i) == LeftHand_resp
                     tr_corr = 1;
                 end
-            elseif response_mode == 2 && (block_conditions == 2 || block_conditions ==4 ) %house as target, M2
+            elseif response_mode == 2 && (block_conditions == 2 || block_conditions ==4 || block_conditions ==9 ) %house as target, M2
                 if any(LeftHand_resp)
                     false_alarm = 2;
                 elseif targets(i) == RightHand_resp
@@ -609,7 +641,7 @@ end
 
 %a function to generate nback
 function [stim_sequence, nback_matches] = make_nback(input_pics, trial_num_pbl)
-% function to generate nback match sequence. input will be a vector of picture index (input_pics)
+% function to generate 1back match sequence. input will be a vector of picture index (input_pics)
 % and the number of trials (trial_num_pbl) in each block,
 % output will be the stimulus sequence index (stim_sequence), and the binary position vector where there is a match (nback_matches)
 nback_matches = sort(randperm(trial_num_pbl-1,4)+1);
@@ -621,11 +653,44 @@ for i = 1:length(nback_matches)-1
         nback_matches(i+1) = nback_matches(i+1)+2;
     end
 end
-%nback_matches
+
 nback_matches(nback_matches > trial_num_pbl) = [];
+nback_matches(nback_matches < 3) = [];
+%nback_matches
+
 selected_pics = input_pics;
 selected_pics(nback_matches) = input_pics(nback_matches-1);
 stim_sequence = selected_pics;
+end
+
+function [stim_sequence, nback_matches] = make_2back(input_pics, trial_num_pbl)
+% function to generate 2back match sequence. input will be a vector of picture index (input_pics)
+% and the number of trials (trial_num_pbl) in each block,
+% output will be the stimulus sequence index (stim_sequence), and the binary position vector where there is a match (2back_matches)
+nback_matches = sort(randperm(trial_num_pbl-1,4)+1);
+for i = 1:length(nback_matches)
+    if i < length(nback_matches)
+        if nback_matches(i) == nback_matches(i+1)-2
+            nback_matches(i+1) = nback_matches(i+1)+1;
+        end
+    end
+    if i >1
+        if nback_matches(i) == nback_matches(i-1)
+            nback_matches(i) = nback_matches(i)+1;
+        end
+    end
+end
+
+nback_matches(nback_matches > trial_num_pbl) = [];
+nback_matches(nback_matches < 3) = [];
+nback_matches
+
+selected_pics = input_pics;
+for i = 1:length(nback_matches)
+    selected_pics(nback_matches(i)) = selected_pics(nback_matches(i)-2);
+end
+stim_sequence = selected_pics
+
 end
 
 
