@@ -1,17 +1,19 @@
 function data_mat = ERTTD(subjname, sessions, motor_mapping)
 % Psychtoolbox script for the event related version of TDSigEI paradigm.
-% Usage TTDSig(subjname, sessions, motor_mapping)
+% Usage ERTTD(subjname, sessions, motor_mapping)
 %
 % for subjname, please input subject ID and the session number, such as 1001_session1 would be subject number 1001 session 1
 %
 % sessions would be an array of integers ranging from 1 to 7 indicating the conditions to run, they represent:
-%   1:Fo = face as target on top of scramble houses
-%   2:Ho = House as target on top of scramble faces
-%   3:FH = Face as target on top of house distractors
-%   4:HF = House as target on top of face distractors
+%   1:Fo = face as target on top of scramble houses, 1-back
+%   2:Ho = House as target on top of scramble faces, 1-back
+%   3:FH = Face as target on top of house distractors, 1-back
+%   4:HF = House as target on top of face distractors, 1-back
 %   5:B = attend both conditions, semi-transparent house/faces impose on top of each other
 %   6:Fp = passivly viewing faces
 %   7:Hp = passively viewing houses
+%   8:F2 = Face as target on top of house distractors, 2-back
+%   9:H2 = House as target on top of face distractors, 2-back
 % so if session input is [ 1 2 3], that means condtion Fo, Ho, FH will be
 % given to the subject sequentially. Within each condition session, several
 % blocks of trials will be given. Now the default is 4 task blcoks each
