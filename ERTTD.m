@@ -58,19 +58,20 @@ house_dir = fullfile(WD, 'Houses'); %stimuli of houses
 curr_dir = WD;
 
 %setup number of blocks, number of trials within blocks
-block_num = 4;
-trial_num_pbl = 12;
+block_num = 3;
+trial_num_pbl = 13;
 %prac_trial_num=1;
 
 %setup trial timing
 instruction_on_screen_time = 1;
-inter_block_interval = 20;
+inter_block_interval = 30;
 initial_wait_time = 2;
 block_start_cue_time = 2;
 %stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
 %delay_time = .5; %time of delay between stimulus
 stim_on_time = .25; %time of stimulus on screen
-delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 6 6]; %time of delay between stimulus (ITI)
+delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 4.5 6 6 7.5]; %time of delay between stimulus (ITI)
+delay_times = delay_times(randperm(trial_num_pbl));
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbName('UnifyKeyNames');
@@ -300,8 +301,8 @@ for block_conditions = sessions
     for j = 1:block_num
         
         %create ITI sequence
-        ITIs = delay_times(randperm(11));
-        ITIs(12) = 1.5
+        ITIs = delay_times(randperm(trial_num_pbl))
+        %ITIs(trial_num_pbl) = 1.5
 
         %%create sequence of 1-back match
         switch(block_conditions)
@@ -611,7 +612,7 @@ function [stim_sequence, nback_matches] = make_nback(input_pics, trial_num_pbl)
 % function to generate nback match sequence. input will be a vector of picture index (input_pics)
 % and the number of trials (trial_num_pbl) in each block,
 % output will be the stimulus sequence index (stim_sequence), and the binary position vector where there is a match (nback_matches)
-nback_matches = sort(randperm(trial_num_pbl-1,3)+1);
+nback_matches = sort(randperm(trial_num_pbl-1,4)+1);
 for i = 1:length(nback_matches)-1
     if nback_matches(i) == nback_matches(i+1)-1
         nback_matches(i+1) = nback_matches(i+1)+1;
@@ -620,6 +621,7 @@ for i = 1:length(nback_matches)-1
         nback_matches(i+1) = nback_matches(i+1)+2;
     end
 end
+%nback_matches
 nback_matches(nback_matches > trial_num_pbl) = [];
 selected_pics = input_pics;
 selected_pics(nback_matches) = input_pics(nback_matches-1);
