@@ -49,6 +49,8 @@ end
 
 %% Setup parameters
 sca;
+AssertOpenGL; 
+HideCursor;
 
 
 %setup paths to load stimuli and write outputs
@@ -76,6 +78,7 @@ delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 4.5 6 6 7.5]; %time of delay betwee
 delay_times = delay_times(randperm(trial_num_pbl));
 
 %setup keyboard responses (if at scanner this will likely have to be different)
+KbCheck; 
 KbName('UnifyKeyNames');
 %subjects will be asked to respond with either their right or left index if they detect a target.
 % they will be asked to place their right index finger on key "k", left
@@ -86,7 +89,9 @@ LeftIndex = KbName('1!');
 TTL = KbName('5%');
 
 %setup display options
-%Screen('Preference', 'SkipSyncTests', 1); %some timing stuff...
+Screen('Preference', 'SkipSyncTests', 2); % 1 skips the tests, 0 conducts them
+Screen('Preference', 'VisualDebugLevel', 3);% to suppress the PTB survey screen
+Screen('Preference', 'VBLTimestampingMode', 1);
 screens = Screen('Screens');
 screenNumber = max(screens); %get external display if available
 %if want to hide mouse corsor, use Screen('HideCursorHelper',window);
@@ -700,7 +705,7 @@ function check_keypress(RightIndex,LeftIndex)
 keepchecking = 1;
 clear keyCode keyIsDown
 while (keepchecking == 1)
-    [keyIsDown,secs,keyCode] = KbCheck(-1); % In while-loop, rapidly and continuously check if the return key being pressed.
+    [keyIsDown,secs,keyCode] = KbCheck(-3); % In while-loop, rapidly and continuously check if the return key being pressed.
     if(keyIsDown)  % If key is being pressed...
         if keyCode(RightIndex) || keyCode(LeftIndex) 
             keepchecking = 0;
