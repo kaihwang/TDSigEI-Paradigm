@@ -47,7 +47,8 @@ if length(sessions) ~= length(motor_mapping)
     error('number of session does not match number of motor mapping given!!');
 end
 
-%% Setup parameters
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% Setup parameters
 sca;
 AssertOpenGL; 
 HideCursor;
@@ -82,7 +83,7 @@ KbCheck;
 KbName('UnifyKeyNames');
 %subjects will be asked to respond with either their right or left index if they detect a target.
 % they will be asked to place their right index finger on key "k", left
-% index finger on key "d"\
+% index finger on key "d"
 % this mapping will be different at the scanner....
 RightIndex = KbName('4$');
 LeftIndex = KbName('1!');
@@ -124,6 +125,10 @@ Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 imageRect = [xCenter-212 yCenter-212 xCenter+212 yCenter+212];
 
 
+
+%%%%%%%%%%%%%%%%
+%%%%%%Start task
+
 %% start session sequence
 m = 0;
 data_str=[]; %output structure
@@ -132,6 +137,9 @@ tr_num_cnt = 0; %count number of trials
 
 for block_conditions = sessions
     
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%start instructions
     %% initialize instruction screen
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
@@ -210,12 +218,8 @@ for block_conditions = sessions
     WaitSecs(.1);
     check_keypress(RightIndex,LeftIndex);
 
-    % instruction should at least be on the scren for 10 sec
-    %starttime2 = GetSecs;
-    %while (GetSecs - starttime2 < instruction_on_screen_time)
-    %end
-    %WaitSecs(instruction_on_screen_time);
-    
+    %%%%%%%%%%%%%%%%%%
+    %%% Prepare Stimulus    
     %% Stimulus preparation based on task conditions
     Conditions = {'Fo', 'Ho', 'FH', 'HF', 'B', 'Fp', 'Hp', 'F2', 'H2'};
     %1:Fo = face as target on top of scramble houses
@@ -286,8 +290,9 @@ for block_conditions = sessions
             %mask_images = House_ScrambleImages;            
     end
     
-    
-    % a key stroke will end the instruction page, or if at the scanner, wait for ttl pulse to start the task blocks
+    %%%%%%%%%%%%%%
+    %%Wait fo TTL
+    %a key stroke will end the instruction page, or if at the scanner, wait for ttl pulse to start the task blocks
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
     Screen('TextFont', window ,'Arial'); %set font
@@ -309,7 +314,6 @@ for block_conditions = sessions
     end
     experiment_start_time = GetSecs;
     
-    
     %% Insert a 2 seconds delay after instruction 
     Screen(window,'FillRect',grey);
     Screen(window, 'Flip');
@@ -322,6 +326,9 @@ for block_conditions = sessions
     %while (GetSecs - starttime2 < initial_wait_time)
     %end
     
+
+    %%%%%%%%%%%%%%%%
+    %%% Start Task blocks
     accum_accu = [];
     %% block sequence
     for j = 1:block_num
@@ -330,7 +337,10 @@ for block_conditions = sessions
         ITIs = delay_times(randperm(trial_num_pbl))
         %ITIs(trial_num_pbl) = 1.5
 
-        %%create sequence of 1-back match
+
+        %%%%%%%%%%%%%%%%
+        %%%% create stimulus seq depending on codition
+
         switch(block_conditions)
             case num2cell([1 2 3 4])
                 %selected_pics = randperm(60, trial_num_pbl); %the total set is 60 pictures per category
@@ -379,7 +389,7 @@ for block_conditions = sessions
                 targets = ones(1,trial_num_pbl);
         end
         
-        %pic_num = 0; %count picture number
+        %%%%%%%%%%%%%%%%%%%%%%%%        
         %% trial sequence
         for i = 1:trial_num_pbl
             
@@ -445,7 +455,7 @@ for block_conditions = sessions
 %             end
 %             
             
-            %put up delay screen for ITI (fixation cross)
+            % put up delay screen for ITI (fixation cross)
             ITI_start_time = GetSecs;
             Screen(window,'FillRect',grey);
             Screen('TextSize', window, 80);
@@ -468,6 +478,7 @@ for block_conditions = sessions
             %while (GetSecs - starttime2 < delay_time)
             %end
             
+            %%%%%%%%%%%%%%%%%%%%%%%%%%
             %% determine accuracy of responses
             tr_corr = 0; %tr_corr = 1 is correct, 2 is false alarm, 0 is incorrect
             false_alarm = 0;
@@ -555,29 +566,14 @@ for block_conditions = sessions
             
         end
         
+
+        %%%%%%%%%%%%%%%%%%%%%%%
         %% fixation rest block
         if j < block_num
             Screen(window,'FillRect',grey);
             Screen('DrawDots', window, [xCenter yCenter], 35, green, [], 2); %green dot in the center
             Screen(window, 'Flip');
             WaitSecs(inter_block_interval);
-            %starttime2 = GetSecs;
-            %while (GetSecs - starttime2 < inter_block_interval)
-            %end
-            
-            
-            % Screen(window,'FillRect',grey);
-            % Screen('TextSize', window, 80);
-            % DrawFormattedText(window, 'Press any key to continue', 'center',...
-            %     screenYpixels * 0.5, [0 0 1]);
-            % Screen(window, 'Flip');
-            %keepchecking = 1;
-            %while (keepchecking == 1)
-            %    [keyIsDown,secs,keyCode] = KbCheck; % In while-loop, rapidly and continuously check if the return key being pressed.
-            %    if(keyIsDown)  % If key is being pressed...
-            %        keepchecking = 0; % ... end while-loop.
-            %    end
-            %end
             
             % the get ready screen to move back to the start of the block
             Screen(window,'FillRect',grey);
@@ -592,9 +588,9 @@ for block_conditions = sessions
             %end
         end
         
-
+        %%%%%%%%%%%%%%%%%%%%%%%
+        %for the final rest block
         if j == block_num
-            %% final rest
 
             Screen(window,'FillRect',grey);
             Screen('TextSize', window, 80);
