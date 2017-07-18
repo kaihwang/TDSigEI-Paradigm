@@ -60,22 +60,28 @@ addpath(WD);
 data_dir = fullfile(WD, 'data'); %output
 face_dir = fullfile(WD, 'Faces'); %stimuli of faces
 house_dir = fullfile(WD, 'Houses'); %stimuli of houses
+ITI_dir = fullfile(WD, 'Optimization'); %ITI schedules
 curr_dir = WD;
 
-%setup number of blocks, number of trials within blocks
+%setup number of blocks, number of trials within blocks, and timing variables
 block_num = 3;
 trial_num_pbl = 13;
-%prac_trial_num=1;
-
-%setup trial timing
 instruction_on_screen_time = 1;
 inter_block_interval = 30;
-initial_wait_time = 2;
+initial_wait_time = 1.5;
 block_start_cue_time = 2;
-%stim_on_time = 1; %time of stimulus on screen, %speed up when testing script
-%delay_time = .5; %time of delay between stimulus
+final_rest_time = 10;
 stim_on_time = .25; %time of stimulus on screen
-delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 4.5 6 6 7.5]; %time of delay between stimulus (ITI)
+%randomly select ITI schedules based on the number of blocks
+ITI_schedules={};
+i=1;
+for n = randperm(72,3);
+    ITI_schedules{i} = load(fullfile(ITI_dir, strcat('ITI',num2str(n),'.txt')));
+    i = i+1;
+end 
+clear i
+
+%delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 4.5 6 6 7.5]; %time of delay between stimulus (ITI)
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbCheck; 
@@ -335,7 +341,7 @@ for block_conditions = sessions
     for j = 1:block_num
         
         %create ITI sequence
-        ITIs = Shuffle(delay_times)
+        ITIs = ITI_schedules{j};%Shuffle(delay_times)
         %ITIs(trial_num_pbl) = 1.5
 
 
@@ -602,7 +608,7 @@ for block_conditions = sessions
             %Screen(window,'FillRect',grey);
             %Screen('DrawDots', window, [xCenter yCenter], 35, green, [], 2); %green dot in the center
             %Screen(window, 'Flip');
-            WaitSecs(3); %final rest
+            WaitSecs(final_rest_time); %final rest
 
             experiment_end_time = GetSecs - experiment_start_time
 
