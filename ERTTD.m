@@ -52,7 +52,7 @@ end
 sca;
 AssertOpenGL; 
 HideCursor;
-
+rng('shuffle'); %so that rand gives different number everytime script is started
 
 %setup paths to load stimuli and write outputs
 WD = pwd;
@@ -76,7 +76,6 @@ block_start_cue_time = 2;
 %delay_time = .5; %time of delay between stimulus
 stim_on_time = .25; %time of stimulus on screen
 delay_times = [1.5 1.5 1.5 3 3 3 4.5 4.5 4.5 4.5 6 6 7.5]; %time of delay between stimulus (ITI)
-delay_times = delay_times(randperm(trial_num_pbl));
 
 %setup keyboard responses (if at scanner this will likely have to be different)
 KbCheck; 
@@ -90,9 +89,9 @@ LeftIndex = KbName('1!');
 TTL = KbName('5%');
 
 %setup display options
-Screen('Preference', 'SkipSyncTests', 2); % 1 skips the tests, 0 conducts them
+Screen('Preference', 'SkipSyncTests', 1); % 1 skips the tests, 0 conducts them
 Screen('Preference', 'VisualDebugLevel', 3);% to suppress the PTB survey screen
-Screen('Preference', 'VBLTimestampingMode', 1);
+Screen('Preference', 'VBLTimestampingMode', 1); %improve timing on MAC
 screens = Screen('Screens');
 screenNumber = max(screens); %get external display if available
 %if want to hide mouse corsor, use Screen('HideCursorHelper',window);
@@ -222,13 +221,15 @@ for block_conditions = sessions
     %%% Prepare Stimulus    
     %% Stimulus preparation based on task conditions
     Conditions = {'Fo', 'Ho', 'FH', 'HF', 'B', 'Fp', 'Hp', 'F2', 'H2'};
-    %1:Fo = face as target on top of scramble houses
-    %2:Ho = House as target on top of scramble faces
-    %3:FH = Face as target on top of house distractors
-    %4:HF = House as target on top of face distractors
+    %1:Fo = face as target on top of scramble houses, 1bk
+    %2:Ho = House as target on top of scramble faces, 1bk
+    %3:FH = Face as target on top of house distractors, 1bk
+    %4:HF = House as target on top of face distractors, 1bk
     %5:B = attend both conditions, semi-transparent house/faces impose on top of each other
     %6:Fp = passivly viewing faces
     %7:Hp = passively viewing houses
+    %8:F2 = Face as target on top of house distractors, 2bk
+    %9:H2 = Face as target on top of house distractors, 2bk
         
     % stimulus loading and preparation
     %[Face_Images,Face_Names]=load_all_images_from_dir(face_dir);
@@ -334,7 +335,7 @@ for block_conditions = sessions
     for j = 1:block_num
         
         %create ITI sequence
-        ITIs = delay_times(randperm(trial_num_pbl))
+        ITIs = Shuffle(delay_times)
         %ITIs(trial_num_pbl) = 1.5
 
 
